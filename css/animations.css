@@ -1,0 +1,40 @@
+/* ==========================================================================
+   Animations — keep subtle, respect prefers-reduced-motion
+   ========================================================================== */
+
+@keyframes toast-in{
+  from{ opacity: 0; transform: translateX(24px); }
+  to{ opacity: 1; transform: translateX(0); }
+}
+
+@keyframes skeleton-loading{
+  0%{ background-position: 100% 50%; }
+  100%{ background-position: 0 50%; }
+}
+
+@keyframes fade-in{
+  from{ opacity: 0; }
+  to{ opacity: 1; }
+}
+
+@keyframes modal-pop{
+  from{ opacity: 0; transform: translateY(8px) scale(0.98); }
+  to{ opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes spin{
+  to{ transform: rotate(360deg); }
+}
+
+.modal-overlay.is-open .modal{ animation: modal-pop var(--duration-base) var(--ease-standard); }
+.view.is-active, .view.is-flex-active{ animation: fade-in var(--duration-base) var(--ease-standard); }
+
+.spin{ animation: spin 0.9s linear infinite; }
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

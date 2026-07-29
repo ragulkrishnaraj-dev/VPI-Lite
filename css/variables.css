@@ -1,0 +1,109 @@
+/* ==========================================================================
+   VPI Lite — Design Tokens
+   A distinct enterprise design language: deep navy + brushed gold on pearl.
+   8px base spacing system. WCAG 2.2 AA contrast targets throughout.
+   ========================================================================== */
+
+:root{
+  color-scheme: light;
+
+  /* ---- Brand palette (locked — do not add colors outside this set) ---- */
+  --primary:        #18243E;   /* deep navy   — chrome, active states, primary actions   */
+  --primary-700:    #101a2e;   /* pressed / hover-dark                                    */
+  --primary-100:    #e8eaef;   /* tinted surface on navy family                           */
+  --secondary:      #BD9A62;   /* brushed gold — accents, focus rings, chart highlight    */
+  --secondary-700:  #a3814e;   /* pressed gold                                            */
+  --secondary-900:  #6b4f28;   /* AA-safe gold text on light/gold surfaces                */
+  --secondary-100:  #f4ecdd;   /* pale gold tint for badges/highlights                    */
+  --white:          #FFFFFF;
+  --pearl:          #EFEFEF;   /* app background, card fields, zebra rows                 */
+  --red:            #E21E26;   /* destructive / error / alert                             */
+  --red-100:        #fbe6e7;
+  --grey:           #B4B4B4;   /* borders, dividers                                       */
+  --mid-grey:       #575757;   /* secondary text                                          */
+  --dark-grey:      #1C1C1C;   /* headings, primary text                                  */
+
+  /* ---- Semantic aliases ---- */
+  --surface-page:      var(--pearl);
+  --surface-card:      var(--white);
+  --surface-sunken:    #E4E4E4;
+  --surface-inverse:   var(--primary);
+  --border-default:    var(--grey);
+  --border-subtle:     #D8D8D8;
+  --border-strong:     var(--dark-grey);
+  --text-heading:      var(--dark-grey);
+  --text-body:         #333333;
+  --text-muted:        var(--mid-grey);
+  --text-inverse:      var(--white);
+  --text-on-gold:      var(--primary);
+  --accent:            var(--secondary);
+  --danger:            var(--red);
+  --success:           #2E6B4F;   /* olive-green kept within neutral/mid tones for status  */
+  --warning:           var(--secondary-700);
+  --focus-ring:         0 0 0 3px rgba(189,154,98,0.45);
+
+  /* ---- Spacing scale (8px system) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ---- Radius scale ---- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 16px;
+  --radius-pill: 999px;
+
+  /* ---- Elevation ---- */
+  --shadow-1: 0 1px 2px rgba(24,36,62,0.06);
+  --shadow-2: 0 2px 8px rgba(24,36,62,0.08);
+  --shadow-3: 0 8px 24px rgba(24,36,62,0.12);
+  --shadow-4: 0 16px 40px rgba(24,36,62,0.18);
+  --shadow-gold-focus: 0 0 0 3px rgba(189,154,98,0.35);
+
+  /* ---- Typography ---- */
+  --font-heading: 'Sora', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --fs-h1: 2rem;        /* 32px */
+  --fs-h2: 1.5rem;       /* 24px */
+  --fs-h3: 1.125rem;     /* 18px */
+  --fs-h4: 1rem;         /* 16px */
+  --fs-body: 0.9375rem;  /* 15px */
+  --fs-small: 0.8125rem; /* 13px */
+  --fs-caption: 0.6875rem; /* 11px */
+
+  --lh-tight: 1.2;
+  --lh-normal: 1.5;
+  --lh-relaxed: 1.7;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  --tracking-wide: 0.06em;
+  --tracking-wider: 0.12em;
+
+  /* ---- Motion ---- */
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 360ms;
+
+  /* ---- Layout ---- */
+  --sidebar-width: 264px;
+  --sidebar-width-collapsed: 76px;
+  --header-height: 72px;
+  --content-max: 1440px;
+}

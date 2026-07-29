@@ -1,0 +1,96 @@
+/* ==========================================================================
+   Tables — sticky header, zebra rows, hover, sort, filters, pagination
+   ========================================================================== */
+
+.table-wrap{
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.table-scroll{ overflow-x: auto; max-height: 560px; overflow-y: auto; }
+
+table.data-table{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-small);
+}
+
+/* Light editorial header: pearl band with a gold hairline, not a solid navy bar */
+.data-table thead th{
+  position: sticky; top: 0; z-index: 5;
+  background: var(--pearl);
+  color: var(--mid-grey);
+  text-align: left;
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--fs-caption);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  font-weight: var(--fw-bold);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 2px solid var(--secondary);
+  transition: color var(--duration-base), background-color var(--duration-base);
+}
+.data-table thead th:hover{ color: var(--primary); background: var(--surface-sunken); }
+.data-table thead th .sort-icon{ width: 12px; height: 12px; margin-left: 4px; opacity: 0.6; vertical-align: -2px; }
+
+.data-table tbody td{
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-body);
+  vertical-align: middle;
+}
+
+/* Row hover reveals a gold spine on the leading cell */
+.data-table tbody tr{
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.data-table tbody tr:nth-child(even){ background: #F7F7F7; }
+.data-table tbody tr td:first-child{
+  box-shadow: inset 3px 0 0 -3px var(--secondary);
+  transition: box-shadow var(--duration-base) var(--ease-standard);
+}
+.data-table tbody tr:hover{ background: var(--white); }
+.data-table tbody tr:hover td{ color: var(--text-heading); }
+.data-table tbody tr:hover td:first-child{ box-shadow: inset 3px 0 0 0 var(--secondary); }
+.data-table tbody tr:last-child td{ border-bottom: none; }
+
+/* Reveal row actions only on hover / keyboard focus */
+.data-table tbody .cell-actions .icon-btn{
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity var(--duration-base), transform var(--duration-base) var(--ease-standard);
+}
+.data-table tbody tr:hover .cell-actions .icon-btn,
+.data-table tbody tr:focus-within .cell-actions .icon-btn{ opacity: 1; transform: translateX(0); }
+
+.cell-mono{ font-family: var(--font-mono); font-size: 12px; color: var(--mid-grey); }
+.cell-strong{ font-weight: var(--fw-semibold); color: var(--text-heading); }
+.cell-actions{ display: flex; gap: var(--space-2); justify-content: flex-end; }
+
+.table-toolbar{
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+.table-toolbar h3{ margin: 0; }
+
+/* status pill used within table rows */
+.status-pill{
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: var(--fs-caption); font-weight: var(--fw-semibold);
+  padding: 3px var(--space-3); border-radius: var(--radius-pill);
+}
+.status-pill::before{ content:""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.status-pill.status-running{ background: var(--primary-100); color: var(--primary); }
+.status-pill.status-queued{ background: var(--secondary-100); color: var(--secondary-700); }
+.status-pill.status-completed{ background: #e6f0ea; color: var(--success); }
+.status-pill.status-failed{ background: var(--red-100); color: var(--red); }
+.status-pill.status-published{ background: #e6f0ea; color: var(--success); }
+.status-pill.status-draft{ background: var(--pearl); color: var(--mid-grey); }
+
+.mini-progress{ width: 90px; height: 5px; border-radius: var(--radius-pill); background: var(--pearl); overflow: hidden; }
+.mini-progress span{ display: block; height: 100%; background: var(--secondary); }

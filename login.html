@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — VPI Lite</title>
+<meta name="description" content="Sign in to VPI Lite payments reporting.">
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/login.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body{
+    margin: 0;
+    font-family: var(--font-body);
+    color: var(--text-body);
+    -webkit-font-smoothing: antialiased;
+  }
+</style>
+</head>
+<body>
+
+<main class="login-page">
+  <div class="login-card">
+
+    <!-- Brand panel -->
+    <section class="login-brand">
+      <div class="login-logo">
+        <span class="login-logo-mark" aria-hidden="true">VL</span>
+        <span class="login-logo-text">VPI Lite</span>
+      </div>
+      <p class="login-blurb">
+        We are a global financial technology company, with two decades of
+        experience serving as trusted strategic partners for financial
+        institutions of all sizes.
+      </p>
+    </section>
+
+    <!-- Form panel -->
+    <section class="login-form-panel">
+      <h1 class="login-heading">Login</h1>
+
+      <form id="loginForm" novalidate>
+        <div class="login-field">
+          <label class="login-label" for="username">Username (Business Email Address)</label>
+          <input class="login-input" type="email" id="username" name="username"
+                 autocomplete="username" aria-describedby="usernameError" required>
+          <p class="login-error" id="usernameError" role="alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Enter your business email address to continue.</span>
+          </p>
+        </div>
+
+        <div class="login-actions">
+          <button class="login-next" type="submit">Next</button>
+          <p class="login-hint">Demo build — any value signs you in.</p>
+        </div>
+      </form>
+    </section>
+
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var form = document.getElementById('loginForm');
+  var input = document.getElementById('username');
+  var error = document.getElementById('usernameError');
+
+  function showError(show) {
+    input.classList.toggle('has-error', show);
+    error.classList.toggle('is-visible', show);
+    input.setAttribute('aria-invalid', String(show));
+  }
+
+  input.addEventListener('input', function () { showError(false); });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var value = input.value.trim();
+
+    // Demo auth: any non-empty value is accepted.
+    if (!value) {
+      showError(true);
+      input.focus();
+      return;
+    }
+
+    try {
+      sessionStorage.setItem('vpi.session', JSON.stringify({
+        username: value,
+        signedInAt: new Date().toISOString()
+      }));
+    } catch (err) {
+      /* storage unavailable (e.g. strict file:// context) — continue anyway */
+    }
+
+    window.location.href = 'index.html';
+  });
+})();
+</script>
+</body>
+</html>
