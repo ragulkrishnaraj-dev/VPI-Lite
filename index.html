@@ -111,6 +111,73 @@
   .report-favourite-btn svg { width:17px; height:17px; pointer-events:none; }
   #catalogueGrid > * { position:relative; }
 </style>
+
+<style>
+/* Favourite empty state */
+#catalogueGrid.favourites-empty {
+  display: flex;
+  min-height: 360px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+#catalogueGrid .favourite-empty-state {
+  width: min(520px, 100%);
+  padding: 54px 24px 58px;
+  text-align: center;
+  color: #64748B;
+}
+
+#catalogueGrid .favourite-empty-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background: #FFF9E8;
+  color: #B58116;
+}
+
+#catalogueGrid .favourite-empty-icon svg {
+  width: 31px;
+  height: 31px;
+}
+
+#catalogueGrid .favourite-empty-state h3 {
+  margin: 0 0 8px;
+  color: #24324A;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+#catalogueGrid .favourite-empty-state p {
+  max-width: 390px;
+  margin: 0 auto;
+  color: #7B8798;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+#catalogueGrid .favourite-empty-state .empty-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  color: #52647D;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+#catalogueGrid .favourite-empty-state .empty-hint svg {
+  width: 15px;
+  height: 15px;
+  color: #B58116;
+}
+</style>
+
 </head>
 <body>
 <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -665,11 +732,41 @@
       : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1 7.5 13.9 3 9.53l6.22-.9L12 3z"/></svg>';
   }
 
+  function renderFavouriteEmptyState(grid, show) {
+    const existing = grid.querySelector('.favourite-empty-state');
+    if (!show) {
+      if (existing) existing.remove();
+      grid.classList.remove('favourites-empty');
+      return;
+    }
+
+    if (existing) return;
+
+    const empty = document.createElement('div');
+    empty.className = 'favourite-empty-state';
+    empty.innerHTML = `
+      <div class="favourite-empty-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+          <path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1l1.06-6.19L3 9.53l6.22-.9L12 3z"/>
+        </svg>
+      </div>
+      <h3>No favourites yet</h3>
+      <p>You haven't added any reports to your favourites.</p>
+      <span class="empty-hint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1l1.06-6.19L3 9.53l6.22-.9L12 3z"/>
+        </svg>
+        Click the star on a report to add it here
+      </span>`;
+    grid.appendChild(empty);
+    grid.classList.add('favourites-empty');
+  }
+
   function syncCards() {
     const grid = document.getElementById('catalogueGrid');
     if (!grid) return;
 
-    const cards = Array.from(grid.children);
+    const cards = Array.from(grid.children).filter(card => !card.classList.contains('favourite-empty-state'));
     cards.forEach(addFavouriteButton);
 
     if (activeCatalogueTab === 'favourites') {
@@ -681,9 +778,11 @@
       cards.forEach(card => { card.style.display = ''; });
     }
 
+    const visible = cards.filter(card => card.style.display !== 'none').length;
+    renderFavouriteEmptyState(grid, activeCatalogueTab === 'favourites' && visible === 0);
+
     const count = document.getElementById('catalogueResultCount');
     if (count && activeCatalogueTab === 'favourites') {
-      const visible = cards.filter(card => card.style.display !== 'none').length;
       count.textContent = visible + (visible === 1 ? ' report' : ' reports');
     }
   }
@@ -741,13 +840,7 @@
       updateFavouriteButton(favouriteButton, id);
 
       if (activeCatalogueTab === 'favourites') {
-        const card = favouriteButton.closest('#catalogueGrid > *');
-        if (card) card.style.display = favouriteIds.has(id) ? '' : 'none';
-        const count = document.getElementById('catalogueResultCount');
-        if (count) {
-          const visible = Array.from(document.querySelectorAll('#catalogueGrid > *')).filter(c => c.style.display !== 'none').length;
-          count.textContent = visible + (visible === 1 ? ' report' : ' reports');
-        }
+        syncCards();
       }
     }
   }, true);
