@@ -12,6 +12,105 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+  /* Report Catalogue - clean application tabs */
+  #view-catalogue .tabbar {
+    display:flex;
+    align-items:stretch;
+    width:max-content;
+    min-width:500px;
+    height:48px;
+    padding:0;
+    background:transparent;
+    border:0;
+    border-bottom:1px solid #cfd5df;
+    border-radius:0;
+    box-shadow:none;
+  }
+  #view-catalogue .tab-btn {
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    min-width:155px;
+    height:48px;
+    padding:0 22px;
+    margin:0;
+    border:0;
+    border-right:1px solid #e1e5eb;
+    border-radius:0;
+    background:#f7f8fa;
+    color:#667085;
+    font-size:14px;
+    font-weight:600;
+    white-space:nowrap;
+    cursor:pointer;
+    box-shadow:none;
+    transition:background .16s ease,color .16s ease;
+  }
+  #view-catalogue .tab-btn:first-child {
+    border-left:1px solid #e1e5eb;
+  }
+  #view-catalogue .tab-btn:hover:not(.is-active) {
+    background:#eef1f5;
+    color:#17243d;
+  }
+  #view-catalogue .tab-btn.is-active {
+    background:#fff;
+    color:#17243d;
+    font-weight:700;
+    box-shadow:none;
+  }
+  #view-catalogue .tab-btn.is-active::after {
+    content:"";
+    position:absolute;
+    left:14px;
+    right:14px;
+    bottom:-1px;
+    height:3px;
+    border-radius:3px 3px 0 0;
+    background:#17243d;
+  }
+  #view-catalogue .tab-btn:nth-child(3) .favourite-tab-icon {
+    color:#8a6a16;
+  }
+  #view-catalogue .tab-btn:nth-child(3).is-active {
+    color:#6b5314;
+    background:#fffdf7;
+  }
+  #view-catalogue .tab-btn:nth-child(3).is-active::after {
+    background:#b58a20;
+  }
+  #view-catalogue .tab-btn:focus-visible {
+    outline:2px solid var(--secondary, #6b7280);
+    outline-offset:-3px;
+  }
+  .favourite-tab-icon { width:15px; height:15px; }
+  .report-favourite-btn {
+    position:absolute;
+    top:12px;
+    right:12px;
+    z-index:5;
+    width:32px;
+    height:32px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+    border:1px solid var(--border, #d9dee7);
+    border-radius:8px;
+    background:var(--surface, #fff);
+    color:#667085;
+    cursor:pointer;
+    transition:all .16s ease;
+  }
+  .report-favourite-btn:hover { transform:translateY(-1px); color:#b7791f; border-color:#d6b36a; }
+  .report-favourite-btn.is-favourite { color:#b7791f; background:#fff8e7; border-color:#e5c77b; }
+  .report-favourite-btn svg { width:17px; height:17px; pointer-events:none; }
+  #catalogueGrid > * { position:relative; }
+</style>
 </head>
 <body>
 <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -190,6 +289,10 @@
             <div class="tabbar" role="tablist">
               <button class="tab-btn is-active" data-tab="public" role="tab" aria-selected="true">Public Reports</button>
               <button class="tab-btn" data-tab="private" role="tab" aria-selected="false">My Private Reports</button>
+              <button class="tab-btn" data-tab="favourites" role="tab" aria-selected="false">
+                <svg class="favourite-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1l1.06-6.19L3 9.53l6.22-.9L12 3z"/></svg>
+                Favourites
+              </button>
             </div>
             <span class="result-count" id="catalogueResultCount" aria-live="polite"></span>
           </div>
@@ -482,6 +585,181 @@
 
 <div id="toastStack" class="toast-stack" role="status" aria-live="polite"></div>
 
+\n<script>
+(function () {
+  const STORAGE_KEY = 'vpiLiteFavouriteReports';
+  let favouriteIds = new Set();
+  let activeCatalogueTab = 'public';
+  let observerStarted = false;
+
+  function loadFavourites() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      favouriteIds = new Set(Array.isArray(saved) ? saved : []);
+    } catch (_) {
+      favouriteIds = new Set();
+    }
+  }
+
+  function saveFavourites() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(favouriteIds)));
+  }
+
+  function escapeKey(value) {
+    return String(value || '').trim().replace(/\\s+/g, ' ').toLowerCase();
+  }
+
+  function getCardId(card) {
+    if (!card) return '';
+    const explicit = card.dataset.reportId || card.getAttribute('data-report-id') || card.id;
+    if (explicit) return escapeKey(explicit);
+
+    const title = card.querySelector('h1,h2,h3,h4,h5,.report-card-title,.card-title,.report-name,[data-report-name]');
+    if (title && title.textContent.trim()) return escapeKey(title.textContent);
+
+    return escapeKey(card.textContent).slice(0, 180);
+  }
+
+  function showToast(message, type) {
+    if (window.VP && VP.ui && typeof VP.ui.toast === 'function') {
+      VP.ui.toast(type || 'success', message, '');
+      return;
+    }
+
+    let stack = document.getElementById('toastStack');
+    if (!stack) return;
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-' + (type || 'success');
+    toast.textContent = message;
+    stack.appendChild(toast);
+    setTimeout(() => toast.remove(), 2800);
+  }
+
+  function addFavouriteButton(card) {
+    if (!card || card.dataset.favouriteReady === 'true') return;
+    const id = getCardId(card);
+    if (!id) return;
+
+    // Keep the card usable with the existing layout.
+    if (getComputedStyle(card).position === 'static') card.style.position = 'relative';
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'report-favourite-btn';
+    button.setAttribute('aria-label', 'Add to favourites');
+    button.setAttribute('title', 'Add to favourites');
+    button.dataset.reportFavourite = id;
+    button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1l1.06-6.19L3 9.53l6.22-.9L12 3z"/></svg>';
+    card.appendChild(button);
+    card.dataset.favouriteReady = 'true';
+    updateFavouriteButton(button, id);
+  }
+
+  function updateFavouriteButton(button, id) {
+    const isFavourite = favouriteIds.has(id);
+    button.classList.toggle('is-favourite', isFavourite);
+    button.setAttribute('aria-label', isFavourite ? 'Remove from favourites' : 'Add to favourites');
+    button.setAttribute('title', isFavourite ? 'Remove from favourites' : 'Add to favourites');
+    button.innerHTML = isFavourite
+      ? '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1l1.06-6.19L3 9.53l6.22-.9L12 3z"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1 7.5 13.9 3 9.53l6.22-.9L12 3z"/></svg>';
+  }
+
+  function syncCards() {
+    const grid = document.getElementById('catalogueGrid');
+    if (!grid) return;
+
+    const cards = Array.from(grid.children);
+    cards.forEach(addFavouriteButton);
+
+    if (activeCatalogueTab === 'favourites') {
+      cards.forEach(card => {
+        const id = getCardId(card);
+        card.style.display = favouriteIds.has(id) ? '' : 'none';
+      });
+    } else {
+      cards.forEach(card => { card.style.display = ''; });
+    }
+
+    const count = document.getElementById('catalogueResultCount');
+    if (count && activeCatalogueTab === 'favourites') {
+      const visible = cards.filter(card => card.style.display !== 'none').length;
+      count.textContent = visible + (visible === 1 ? ' report' : ' reports');
+    }
+  }
+
+  function setActiveTab(tab) {
+    activeCatalogueTab = tab;
+    document.querySelectorAll('#view-catalogue .tab-btn').forEach(btn => {
+      const active = btn.dataset.tab === tab;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-selected', String(active));
+    });
+    syncCards();
+  }
+
+  function startObserver() {
+    if (observerStarted) return;
+    observerStarted = true;
+    const grid = document.getElementById('catalogueGrid');
+    if (!grid) return;
+    const observer = new MutationObserver(() => {
+      requestAnimationFrame(syncCards);
+    });
+    observer.observe(grid, { childList: true, subtree: true });
+    syncCards();
+  }
+
+  document.addEventListener('click', function (event) {
+    const tab = event.target.closest('#view-catalogue .tab-btn');
+    if (tab) {
+      if (tab.dataset.tab === 'favourites') {
+        event.preventDefault();
+        setActiveTab('favourites');
+      } else {
+        activeCatalogueTab = tab.dataset.tab || 'public';
+        setTimeout(syncCards, 0);
+      }
+      return;
+    }
+
+    const favouriteButton = event.target.closest('.report-favourite-btn');
+    if (favouriteButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      const id = favouriteButton.dataset.reportFavourite;
+      if (!id) return;
+
+      if (favouriteIds.has(id)) {
+        favouriteIds.delete(id);
+        showToast('Removed from favourites', 'info');
+      } else {
+        favouriteIds.add(id);
+        showToast('Added to favourites', 'success');
+      }
+      saveFavourites();
+      updateFavouriteButton(favouriteButton, id);
+
+      if (activeCatalogueTab === 'favourites') {
+        const card = favouriteButton.closest('#catalogueGrid > *');
+        if (card) card.style.display = favouriteIds.has(id) ? '' : 'none';
+        const count = document.getElementById('catalogueResultCount');
+        if (count) {
+          const visible = Array.from(document.querySelectorAll('#catalogueGrid > *')).filter(c => c.style.display !== 'none').length;
+          count.textContent = visible + (visible === 1 ? ' report' : ' reports');
+        }
+      }
+    }
+  }, true);
+
+  loadFavourites();
+  document.addEventListener('DOMContentLoaded', function () {
+    startObserver();
+    setTimeout(startObserver, 300);
+    setTimeout(syncCards, 800);
+  });
+})();
+</script>\n
 <script src="js/utility.js"></script>
 <script src="js/data.js"></script>
 <script src="js/chart.js"></script>
