@@ -99,82 +99,462 @@
     align-items:center;
     justify-content:center;
     padding:0;
-    border:1px solid var(--border, #d9dee7);
+    border:1px solid var(--border,#d9dee7);
     border-radius:8px;
-    background:var(--surface, #fff);
+    background:var(--surface,#fff);
     color:#667085;
     cursor:pointer;
     transition:all .16s ease;
   }
-  .report-favourite-btn:hover { transform:translateY(-1px); color:#b7791f; border-color:#d6b36a; }
-  .report-favourite-btn.is-favourite { color:#b7791f; background:#fff8e7; border-color:#e5c77b; }
-  .report-favourite-btn svg { width:17px; height:17px; pointer-events:none; }
+  .report-favourite-btn:hover {
+    transform:translateY(-1px);
+    color:#b7791f;
+    border-color:#d6b36a;
+  }
+  .report-favourite-btn.is-favourite {
+    color:#b7791f;
+    background:#fff8e7;
+    border-color:#e5c77b;
+  }
+  .report-favourite-btn svg {
+    width:18px;
+    height:18px;
+    display:block;
+    pointer-events:none;
+  }
+  .report-favourite-btn {
+    line-height:0;
+  }
   #catalogueGrid > * { position:relative; }
+
+  /* Saved Searches - RC-12 */
+  .saved-search-toolbar-group{display:inline-flex;align-items:center;gap:8px;margin-left:4px}
+  .saved-search-btn,.save-current-search-btn{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 12px;border:1px solid var(--border,#d9dee7);border-radius:8px;background:#fff;color:#344054;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .saved-search-btn:hover,.save-current-search-btn:hover{background:#f7f8fa;border-color:#bfc7d4;color:#17243d}
+  .save-current-search-btn{background:#172b4d;color:#fff;border-color:#172b4d}
+  .save-current-search-btn:hover{background:#243b63;color:#fff}
+  .saved-search-btn svg,.save-current-search-btn svg{width:15px;height:15px}
+  .saved-search-count{min-width:18px;height:18px;padding:0 5px;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;background:#eef2f7;color:#536176;font-size:10px;font-weight:700}
+  .saved-search-popover{position:absolute;z-index:1000;top:calc(100% + 8px);right:0;width:390px;background:#fff;border:1px solid #d9dee7;border-radius:10px;box-shadow:0 12px 30px rgba(16,24,40,.14);overflow:hidden;display:none}
+  .saved-search-popover.is-open{display:block}
+  .saved-search-popover-header{padding:14px 16px 10px;border-bottom:1px solid #eef1f5;display:flex;align-items:center;justify-content:space-between}
+  .saved-search-popover-title{font-size:14px;font-weight:700;color:#17243d}
+  .saved-search-popover-subtitle{font-size:11px;color:#667085;margin-top:3px}
+  .saved-search-list{max-height:330px;overflow:auto}
+  .saved-search-empty{padding:28px 20px;text-align:center;color:#667085;font-size:12px}
+  .saved-search-empty svg{width:28px;height:28px;color:#98a2b3;margin-bottom:8px}
+  .saved-search-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #f1f3f6}
+  .saved-search-item:last-child{border-bottom:0}
+  .saved-search-item:hover{background:#f8fafc}
+  .saved-search-main{min-width:0;flex:1;cursor:pointer}
+  .saved-search-name{font-size:13px;font-weight:600;color:#26364a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .saved-search-meta{font-size:11px;color:#8a94a6;margin-top:3px}
+  .saved-search-actions{display:flex;gap:2px}
+  .saved-search-icon-btn{width:28px;height:28px;border:0;background:transparent;border-radius:6px;color:#667085;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+  .saved-search-icon-btn:hover{background:#eef2f6;color:#17243d}
+  .saved-search-icon-btn.delete:hover{background:#fff1f1;color:#b42318}
+  .saved-search-popover-footer{padding:10px 14px;border-top:1px solid #eef1f5;background:#fafbfc}
+  .saved-search-footnote{font-size:10px;color:#8a94a6;line-height:1.4}
+  .saved-search-anchor{position:relative}
+  .saved-search-active{display:none;align-items:center;gap:8px;margin:-8px 0 14px;padding:8px 11px;border:1px solid #d8e0eb;border-radius:7px;background:#f7f9fc;color:#344054;font-size:12px}
+  .saved-search-active.is-visible{display:flex}
+  .saved-search-active .active-dot{width:7px;height:7px;border-radius:50%;background:#172b4d;flex:none}
+  .saved-search-active strong{color:#172b4d}
+  .saved-search-clear{margin-left:auto;border:0;background:transparent;color:#475467;font-size:11px;font-weight:600;cursor:pointer}
+  .saved-search-clear:hover{text-decoration:underline;color:#172b4d}
+  .saved-search-modal-note{font-size:11px;color:#667085;margin-top:6px;line-height:1.45}
+  @media(max-width:900px){.saved-search-popover{right:auto;left:0;width:min(390px,calc(100vw - 32px))}.saved-search-toolbar-group{width:100%;margin-left:0}.saved-search-btn,.save-current-search-btn{flex:1;justify-content:center}}
+
+  /* Report catalogue empty state + saved-search delete confirmation */
+  #view-catalogue .report-grid{
+    min-height:420px;
+    position:relative;
+  }
+  #view-catalogue .report-grid.is-empty{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+  }
+  #view-catalogue .report-grid-empty{
+    width:100%;
+    min-height:420px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    text-align:center;
+    color:#667085;
+    box-sizing:border-box;
+    padding:40px 24px;
+  }
+  #view-catalogue .report-grid-empty-icon{
+    width:48px;
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:14px;
+    border:1px solid #e1e6ed;
+    border-radius:50%;
+    background:#f8fafc;
+    color:#7a8797;
+  }
+  #view-catalogue .report-grid-empty-icon svg{width:22px;height:22px}
+  #view-catalogue .report-grid-empty strong{
+    display:block;
+    color:#344054;
+    font-size:14px;
+    font-weight:700;
+    margin-bottom:5px;
+  }
+  #view-catalogue .report-grid-empty span{
+    display:block;
+    max-width:360px;
+    font-size:12px;
+    line-height:1.5;
+  }
+
+  .delete-search-modal{
+    z-index:20000 !important;
+  }
+  .delete-search-modal .modal{
+    position:relative;
+    z-index:20001;
+    width:min(440px,calc(100vw - 32px));
+  }
+  .delete-search-modal .modal-body{
+    padding-top:22px;
+    padding-bottom:22px;
+  }
+  .delete-search-confirm-icon{
+    width:44px;
+    height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:14px;
+    border-radius:50%;
+    background:#fff1f1;
+    color:#b42318;
+  }
+  .delete-search-confirm-icon svg{width:22px;height:22px}
+  .delete-search-confirm-title{
+    margin:0 0 6px;
+    color:#17243d;
+    font-size:15px;
+    font-weight:700;
+  }
+  .delete-search-confirm-text{
+    margin:0;
+    color:#667085;
+    font-size:12px;
+    line-height:1.55;
+  }
+  .delete-search-confirm-name{
+    color:#344054;
+    font-weight:700;
+  }
+  .delete-search-modal .btn-danger{
+    background:#b42318;
+    border-color:#b42318;
+    color:#fff;
+  }
+  .delete-search-modal .btn-danger:hover{
+    background:#912018;
+    border-color:#912018;
+  }
+
 </style>
 
-<style>
-/* Favourite empty state */
-#catalogueGrid.favourites-empty {
-  display: flex;
-  min-height: 360px;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
+<style id="rc12-clean-redesign">
+/* RC-12 clean toolbar redesign */
+#view-catalogue .toolbar{
+  position:relative;
+  align-items:center;
+  flex-wrap:wrap;
+  row-gap:10px;
 }
-
-#catalogueGrid .favourite-empty-state {
-  width: min(520px, 100%);
-  padding: 54px 24px 58px;
-  text-align: center;
-  color: #64748B;
+#view-catalogue .saved-search-toolbar-group{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-left:0;
 }
-
-#catalogueGrid .favourite-empty-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 18px;
-  background: #FFF9E8;
-  color: #B58116;
+#view-catalogue .saved-search-btn,
+#view-catalogue .save-current-search-btn{
+  height:38px;
+  border-radius:8px;
+  padding:0 12px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.05px;
+  transition:all .15s ease;
 }
-
-#catalogueGrid .favourite-empty-icon svg {
-  width: 31px;
-  height: 31px;
+#view-catalogue .saved-search-btn{
+  min-width:152px;
+  justify-content:center;
+  border:1px solid #cfd7e3;
+  background:#fff;
+  color:#344054;
 }
-
-#catalogueGrid .favourite-empty-state h3 {
-  margin: 0 0 8px;
-  color: #24324A;
-  font-size: 17px;
-  font-weight: 700;
+#view-catalogue .saved-search-btn:hover{
+  border-color:#9eabbc;
+  background:#f8fafc;
+  color:#17243d;
 }
-
-#catalogueGrid .favourite-empty-state p {
-  max-width: 390px;
-  margin: 0 auto;
-  color: #7B8798;
-  font-size: 13px;
-  line-height: 1.6;
+#view-catalogue .saved-search-btn[aria-expanded="true"]{
+  border-color:#172b4d;
+  box-shadow:0 0 0 3px rgba(23,43,77,.08);
 }
-
-#catalogueGrid .favourite-empty-state .empty-hint {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 16px;
-  color: #52647D;
-  font-size: 12px;
-  font-weight: 600;
+#view-catalogue .saved-search-btn svg{
+  width:15px;height:15px;flex:none;
 }
-
-#catalogueGrid .favourite-empty-state .empty-hint svg {
-  width: 15px;
-  height: 15px;
-  color: #B58116;
+#view-catalogue .saved-search-btn .saved-search-chevron{
+  width:13px;height:13px;margin-left:1px;
+  transition:transform .15s ease;
+}
+#view-catalogue .saved-search-btn[aria-expanded="true"] .saved-search-chevron{
+  transform:rotate(180deg);
+}
+#view-catalogue .save-current-search-btn{
+  min-width:122px;
+  justify-content:center;
+  border:1px solid #172b4d;
+  background:#172b4d;
+  color:#fff;
+}
+#view-catalogue .save-current-search-btn:hover{
+  background:#243b63;
+  border-color:#243b63;
+}
+#view-catalogue .saved-search-count{
+  min-width:20px;height:20px;padding:0 6px;
+  border-radius:10px;background:#eef2f7;color:#475467;
+  font-size:10px;font-weight:800;
+}
+#view-catalogue .saved-search-popover{
+  top:calc(100% + 10px);
+  left:0;
+  right:auto;
+  width:430px;
+  max-width:min(430px,calc(100vw - 32px));
+  border:1px solid #d8dee8;
+  border-radius:10px;
+  box-shadow:0 18px 42px rgba(16,24,40,.16);
+  background:#fff;
+}
+#view-catalogue .saved-search-popover-header{
+  padding:15px 16px 12px;
+  background:#fff;
+}
+#view-catalogue .saved-search-popover-title{
+  font-size:14px;
+  color:#17243d;
+}
+#view-catalogue .saved-search-popover-subtitle{
+  margin-top:4px;
+  font-size:11px;
+  color:#667085;
+}
+#view-catalogue .saved-search-tools{
+  display:flex;
+  gap:8px;
+  padding:10px 12px;
+  border-top:1px solid #eef1f5;
+  border-bottom:1px solid #eef1f5;
+  background:#fafbfc;
+}
+#view-catalogue .saved-search-list-search{
+  position:relative;
+  flex:1;
+}
+#view-catalogue .saved-search-list-search svg{
+  position:absolute;
+  left:9px;
+  top:50%;
+  transform:translateY(-50%);
+  width:14px;height:14px;color:#98a2b3;
+  pointer-events:none;
+}
+#view-catalogue .saved-search-list-search input{
+  width:100%;
+  height:32px;
+  box-sizing:border-box;
+  padding:0 9px 0 29px;
+  border:1px solid #d5dbe5;
+  border-radius:6px;
+  background:#fff;
+  color:#344054;
+  outline:none;
+  font-size:11px;
+}
+#view-catalogue .saved-search-list-search input:focus{
+  border-color:#7b8da8;
+  box-shadow:0 0 0 2px rgba(49,91,138,.08);
+}
+#view-catalogue .saved-search-tools select{
+  width:132px;
+  height:32px;
+  padding:0 7px;
+  border:1px solid #d5dbe5;
+  border-radius:6px;
+  background:#fff;
+  color:#344054;
+  font-size:11px;
+}
+#view-catalogue .saved-search-list{
+  max-height:340px;
+  overflow:auto;
+}
+#view-catalogue .saved-search-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px;
+  border-bottom:1px solid #eef1f5;
+  transition:background .12s ease;
+}
+#view-catalogue .saved-search-item:hover{
+  background:#f8fafc;
+}
+#view-catalogue .saved-search-item.is-active{
+  background:#f5f8fc;
+  box-shadow:inset 3px 0 0 #172b4d;
+}
+#view-catalogue .saved-search-main{
+  min-width:0;
+  flex:1;
+  cursor:pointer;
+}
+#view-catalogue .saved-search-name-row{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+}
+#view-catalogue .saved-search-name{
+  min-width:0;
+  font-size:12px;
+  font-weight:700;
+  color:#26364a;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#view-catalogue .saved-search-recent,
+#view-catalogue .saved-search-active-tag{
+  flex:none;
+  font-size:9px;
+  font-weight:800;
+  padding:3px 6px;
+  border-radius:10px;
+  white-space:nowrap;
+}
+#view-catalogue .saved-search-recent{
+  background:#f4f0e7;
+  color:#80652d;
+}
+#view-catalogue .saved-search-active-tag{
+  background:#eaf3ee;
+  color:#2d6a4f;
+}
+#view-catalogue .saved-search-meta{
+  margin-top:4px;
+  font-size:10px;
+  line-height:1.4;
+  color:#667085;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#view-catalogue .saved-search-used{
+  margin-top:3px;
+  font-size:9px;
+  color:#98a2b3;
+}
+#view-catalogue .saved-search-actions{
+  flex:none;
+  display:flex;
+  gap:2px;
+}
+#view-catalogue .saved-search-icon-btn{
+  width:28px;height:28px;
+  border:0;
+  border-radius:6px;
+  background:transparent;
+  color:#667085;
+}
+#view-catalogue .saved-search-icon-btn:hover{
+  background:#edf1f5;
+  color:#17243d;
+}
+#view-catalogue .saved-search-icon-btn.delete:hover{
+  background:#fff1f1;
+  color:#b42318;
+}
+#view-catalogue .saved-search-empty{
+  padding:38px 24px;
+  text-align:center;
+  color:#667085;
+}
+#view-catalogue .saved-search-empty-icon{
+  width:42px;height:42px;
+  margin:0 auto 10px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid #e1e6ed;
+  border-radius:50%;
+  background:#f8fafc;
+  color:#7a8797;
+}
+#view-catalogue .saved-search-empty-icon svg{width:20px;height:20px}
+#view-catalogue .saved-search-empty strong{
+  display:block;
+  margin-bottom:4px;
+  color:#344054;
+  font-size:12px;
+}
+#view-catalogue .saved-search-empty span{
+  display:block;
+  font-size:10px;
+  line-height:1.5;
+}
+#view-catalogue .saved-search-popover-footer{
+  padding:9px 13px;
+  background:#fafbfc;
+}
+#view-catalogue .saved-search-footnote{
+  font-size:9px;
+  color:#7a8797;
+  line-height:1.45;
+}
+#view-catalogue .saved-search-active{
+  margin:-4px 0 12px;
+  padding:9px 12px;
+  border:1px solid #d9e3ef;
+  border-radius:7px;
+  background:#f6f9fc;
+}
+#view-catalogue .saved-search-warning{
+  display:none;
+  align-items:center;
+  gap:8px;
+  margin:-4px 0 12px;
+  padding:9px 12px;
+  border:1px solid #efd6a2;
+  border-radius:7px;
+  background:#fff9ed;
+  color:#76561d;
+  font-size:11px;
+  line-height:1.4;
+}
+#view-catalogue .saved-search-warning.is-visible{display:flex}
+#view-catalogue .saved-search-warning svg{width:15px;height:15px;flex:none}
+@media(max-width:1100px){
+  #view-catalogue .saved-search-toolbar-group{order:10}
+  #view-catalogue .toolbar-spacer{display:none}
+  #view-catalogue .saved-search-popover{left:0}
 }
 </style>
 
@@ -390,8 +770,56 @@
               <option value="">All Authors</option>
               <option>Ragul K</option><option>Ananya Sharma</option><option>Sundar S</option><option>Emma Wilson</option><option>David Johnson</option>
             </select>
+            <div class="saved-search-toolbar-group saved-search-anchor" aria-label="Saved search controls">
+              <button type="button" class="saved-search-btn" id="btnSavedSearches" aria-haspopup="dialog" aria-expanded="false" title="Open your saved searches">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3h12v18l-6-3-6 3z"/></svg>
+                <span>Saved Searches</span>
+                <span class="saved-search-count" id="savedSearchCount">0</span>
+                <svg class="saved-search-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+              </button>
+              <button type="button" class="save-current-search-btn" id="btnSaveSearch" title="Save current search and filters">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                Save Search
+              </button>
+              <div class="saved-search-popover" id="savedSearchPopover" role="dialog" aria-label="Saved searches">
+                <div class="saved-search-popover-header">
+                  <div>
+                    <div class="saved-search-popover-title">Saved Searches</div>
+                    <div class="saved-search-popover-subtitle">Personal searches • criteria only</div>
+                  </div>
+                  <button type="button" class="saved-search-icon-btn" id="closeSavedSearches" aria-label="Close saved searches">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                  </button>
+                </div>
+                <div class="saved-search-tools">
+                  <div class="saved-search-list-search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+                    <input id="savedSearchListSearch" type="search" placeholder="Search saved searches..." aria-label="Search saved searches">
+                  </div>
+                  <select id="savedSearchSort" aria-label="Sort saved searches">
+                    <option value="recent">Recently used</option>
+                    <option value="name">Name</option>
+                    <option value="created">Recently created</option>
+                  </select>
+                </div>
+                <div class="saved-search-list" id="savedSearchList"></div>
+                <div class="saved-search-popover-footer">
+                  <div class="saved-search-footnote">Applying a saved search re-checks current report permissions. Saved searches never store report results.</div>
+                </div>
+              </div>
+            </div>
             <span class="toolbar-spacer"></span>
             <button class="btn btn-ghost btn-sm" id="btnClearFilters">Clear all</button>
+          </div>
+
+          <div class="saved-search-active" id="activeSavedSearch" role="status" aria-live="polite">
+            <span class="active-dot" aria-hidden="true"></span>
+            <span>Saved Search applied: <strong id="activeSavedSearchName"></strong></span>
+            <button type="button" class="saved-search-clear" id="btnClearSavedSearch">Clear saved search</button>
+          </div>
+          <div class="saved-search-warning" id="savedSearchWarning" role="status" aria-live="polite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="m10.3 3.7-8 14A2 2 0 0 0 4 20.7h16a2 2 0 0 0 1.7-3l-8-14a2 2 0 0 0-3.4 0Z"/></svg>
+            <span id="savedSearchWarningText"></span>
           </div>
 
           <div class="report-grid" id="catalogueGrid"></div>
@@ -650,19 +1078,600 @@
   </div>
 </div>
 
+<!-- ============ Saved Search Dialog ============ -->
+<div class="modal-overlay" id="savedSearchModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="savedSearchModalTitle">
+    <div class="modal-header">
+      <span class="modal-title" id="savedSearchModalTitle">Save Search</span>
+      <button class="modal-close" id="savedSearchModalClose" aria-label="Close dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label" for="savedSearchName">Saved Search Name <span aria-hidden="true">*</span></label>
+        <input class="input" id="savedSearchName" type="text" maxlength="80" placeholder="e.g. Daily FedNow Operations" autocomplete="off">
+        <div class="saved-search-modal-note" id="savedSearchCriteriaSummary">Your current search and filter criteria will be saved.</div>
+        <div class="alert alert-danger" id="savedSearchValidation" style="display:none;margin-top:12px;"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="savedSearchCancel">Cancel</button>
+      <button class="btn btn-primary" id="savedSearchConfirm">Save Search</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Delete Saved Search Confirmation ============ -->
+<div class="modal-overlay delete-search-modal" id="deleteSavedSearchModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteSavedSearchModalTitle">
+    <div class="modal-header">
+      <span class="modal-title" id="deleteSavedSearchModalTitle">Delete Saved Search</span>
+      <button class="modal-close" id="deleteSavedSearchModalClose" aria-label="Close dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="delete-search-confirm-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 15H6L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+        </svg>
+      </div>
+      <h3 class="delete-search-confirm-title">Delete this saved search?</h3>
+      <p class="delete-search-confirm-text">
+        You are about to delete <span class="delete-search-confirm-name" id="deleteSavedSearchName"></span>.
+        This removes only the saved search; reports and report metadata are not affected.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="deleteSavedSearchCancel">Cancel</button>
+      <button class="btn btn-danger" id="deleteSavedSearchConfirm">Delete Saved Search</button>
+    </div>
+  </div>
+</div>
+
 <div id="toastStack" class="toast-stack" role="status" aria-live="polite"></div>
 
 \n<script>
 (function () {
+  /* RC-12: Saved Searches — personal, criteria-only, persistent prototype */
+  const STORAGE_KEY = 'vpiLiteSavedSearches';
+  const MAX_SAVED_SEARCHES = 20;
+  let savedSearches = [];
+  let editingSearchId = null;
+  let activeSavedSearchId = null;
+  let modalMode = 'save';
+
+  const fieldIds = ['catalogueSearch','filter-rail','filter-category','filter-region','filter-frequency','filter-author'];
+
+  function escapeHtml(value) {
+    return String(value == null ? '' : value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  }
+
+  function readSavedSearches() {
+    try {
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      savedSearches = Array.isArray(data)
+        ? data.filter(x => x && x.id && x.name && x.criteria).slice(0, MAX_SAVED_SEARCHES)
+        : [];
+    } catch (_) {
+      savedSearches = [];
+    }
+  }
+
+  function persistSavedSearches() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedSearches));
+    updateSavedSearchCount();
+  }
+
+  function currentCriteria() {
+    const criteria = {};
+    fieldIds.forEach(id => {
+      const el = document.getElementById(id);
+      criteria[id] = el ? String(el.value || '') : '';
+    });
+    return criteria;
+  }
+
+  function hasCriteria(criteria) {
+    return Object.values(criteria).some(v => String(v || '').trim() !== '');
+  }
+
+  function criteriaSummary(criteria) {
+    const labels = {
+      catalogueSearch:'Search',
+      'filter-rail':'Rail',
+      'filter-category':'Category',
+      'filter-region':'Region',
+      'filter-frequency':'Frequency',
+      'filter-author':'Author'
+    };
+    const parts = Object.entries(criteria)
+      .filter(([,v]) => String(v || '').trim())
+      .map(([k,v]) => labels[k] + ': ' + v);
+    return parts.length ? parts.join(' • ') : 'No active criteria';
+  }
+
+  function formatUsedDate(item) {
+    const value = item.lastUsedAt || item.createdAt;
+    if (!value) return '';
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return '';
+    const diff = Math.max(0, Date.now() - d.getTime());
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return minutes + ' min ago';
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return hours + ' hr ago';
+    const days = Math.floor(hours / 24);
+    if (days < 7) return days + ' day' + (days === 1 ? '' : 's') + ' ago';
+    return d.toLocaleDateString(undefined, {day:'2-digit', month:'short', year:'numeric'});
+  }
+
+  function openPopover() {
+    const pop = document.getElementById('savedSearchPopover');
+    const btn = document.getElementById('btnSavedSearches');
+    if (!pop || !btn) return;
+    pop.classList.add('is-open');
+    btn.setAttribute('aria-expanded','true');
+    renderSavedSearchList();
+    setTimeout(() => document.getElementById('savedSearchListSearch')?.focus(), 50);
+  }
+
+  function closePopover() {
+    const pop = document.getElementById('savedSearchPopover');
+    const btn = document.getElementById('btnSavedSearches');
+    if (!pop || !btn) return;
+    pop.classList.remove('is-open');
+    btn.setAttribute('aria-expanded','false');
+  }
+
+  function updateSavedSearchCount() {
+    const count = document.getElementById('savedSearchCount');
+    if (count) count.textContent = String(savedSearches.length);
+  }
+
+  function renderSavedSearchList() {
+    const list = document.getElementById('savedSearchList');
+    if (!list) return;
+
+    updateSavedSearchCount();
+
+    const query = String(document.getElementById('savedSearchListSearch')?.value || '').trim().toLowerCase();
+    const sort = document.getElementById('savedSearchSort')?.value || 'recent';
+
+    let sorted = [...savedSearches];
+
+    if (query) {
+      sorted = sorted.filter(item =>
+        item.name.toLowerCase().includes(query) ||
+        criteriaSummary(item.criteria).toLowerCase().includes(query)
+      );
+    }
+
+    sorted.sort((a,b) => {
+      if (sort === 'name') return a.name.localeCompare(b.name);
+      if (sort === 'created') return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      return new Date(b.lastUsedAt || b.createdAt || 0) - new Date(a.lastUsedAt || a.createdAt || 0);
+    });
+
+    if (!sorted.length) {
+      const title = query ? 'No saved searches found' : 'No saved searches yet';
+      const body = query
+        ? 'Try a different name or clear the search.'
+        : 'Save a search and filters to reuse them from the catalogue.';
+      list.innerHTML = `
+        <div class="saved-search-empty">
+          <div class="saved-search-empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M6 3h12v18l-6-3-6 3z"/>
+            </svg>
+          </div>
+          <strong>${title}</strong>
+          <span>${body}</span>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = sorted.map((item, index) => `
+      <div class="saved-search-item ${activeSavedSearchId === item.id ? 'is-active' : ''}"
+           data-saved-search-id="${escapeHtml(item.id)}" tabindex="0" role="button"
+           aria-label="Apply saved search ${escapeHtml(item.name)}">
+        <div class="saved-search-main" data-action="apply">
+          <div class="saved-search-name-row">
+            <div class="saved-search-name">${escapeHtml(item.name)}</div>
+            ${index === 0 && !query && sort === 'recent' ? '<span class="saved-search-recent">Recently used</span>' : ''}
+            ${activeSavedSearchId === item.id ? '<span class="saved-search-active-tag">Active</span>' : ''}
+          </div>
+          <div class="saved-search-meta">${escapeHtml(criteriaSummary(item.criteria))}</div>
+          <div class="saved-search-used">${escapeHtml(formatUsedDate(item))}</div>
+        </div>
+        <div class="saved-search-actions">
+          <button type="button" class="saved-search-icon-btn" data-action="rename" title="Rename" aria-label="Rename ${escapeHtml(item.name)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+          <button type="button" class="saved-search-icon-btn delete" data-action="delete" title="Delete" aria-label="Delete ${escapeHtml(item.name)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 15H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          </button>
+        </div>
+      </div>`).join('');
+  }
+
+  function openModal(mode, item) {
+    modalMode = mode;
+    editingSearchId = item ? item.id : null;
+
+    const modal = document.getElementById('savedSearchModal');
+    const title = document.getElementById('savedSearchModalTitle');
+    const input = document.getElementById('savedSearchName');
+    const confirm = document.getElementById('savedSearchConfirm');
+    const validation = document.getElementById('savedSearchValidation');
+    const summary = document.getElementById('savedSearchCriteriaSummary');
+
+    if (!modal || !input) return;
+
+    title.textContent = mode === 'rename' ? 'Rename Saved Search' : 'Save Search';
+    confirm.textContent = mode === 'rename' ? 'Rename Search' : 'Save Search';
+    validation.style.display = 'none';
+    validation.textContent = '';
+    input.value = item ? item.name : '';
+
+    if (mode === 'rename') {
+      summary.textContent = 'Rename this personal saved search. Its stored criteria will remain unchanged.';
+    } else {
+      summary.textContent = 'Criteria to save: ' + criteriaSummary(currentCriteria());
+    }
+
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden','false');
+    setTimeout(() => input.focus(), 50);
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('savedSearchModal');
+    if (!modal) return;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden','true');
+    editingSearchId = null;
+  }
+
+  function validateName(name, ignoreId) {
+    if (!name.trim()) return 'Saved search name is required.';
+    if (name.trim().length > 80) return 'Saved search name must be 80 characters or fewer.';
+    const duplicate = savedSearches.some(x =>
+      x.id !== ignoreId &&
+      x.name.trim().toLowerCase() === name.trim().toLowerCase()
+    );
+    if (duplicate) return 'A saved search with this name already exists.';
+    return '';
+  }
+
+  function saveOrRename() {
+    const input = document.getElementById('savedSearchName');
+    const validation = document.getElementById('savedSearchValidation');
+    const name = String(input.value || '').trim();
+    const error = validateName(name, modalMode === 'rename' ? editingSearchId : null);
+
+    if (error) {
+      validation.textContent = error;
+      validation.style.display = 'flex';
+      input.focus();
+      return;
+    }
+
+    if (modalMode === 'rename') {
+      const item = savedSearches.find(x => x.id === editingSearchId);
+      if (item) {
+        item.name = name;
+        persistSavedSearches();
+        renderSavedSearchList();
+        updateActiveIndicator();
+        showMessage('Saved search renamed successfully', 'success');
+      }
+      closeModal();
+      return;
+    }
+
+    if (savedSearches.length >= MAX_SAVED_SEARCHES) {
+      validation.textContent = 'You have reached the maximum number of saved searches.';
+      validation.style.display = 'flex';
+      return;
+    }
+
+    const criteria = currentCriteria();
+
+    if (!hasCriteria(criteria)) {
+      validation.textContent = 'Add at least one search or filter criterion before saving.';
+      validation.style.display = 'flex';
+      return;
+    }
+
+    const now = new Date().toISOString();
+    const item = {
+      id: 'ss_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+      name,
+      criteria,
+      createdAt: now,
+      lastUsedAt: null
+    };
+
+    savedSearches.push(item);
+    persistSavedSearches();
+    closeModal();
+    renderSavedSearchList();
+
+    // Creating a saved search does NOT automatically apply it.
+    // The active indicator is reserved for an explicitly applied saved search.
+    showMessage('Saved search "' + name + '" added', 'success');
+  }
+
+  function applySavedSearch(item) {
+    const unavailable = [];
+
+    fieldIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const desired = Object.prototype.hasOwnProperty.call(item.criteria, id)
+        ? item.criteria[id]
+        : '';
+
+      if (el.tagName === 'SELECT' && desired) {
+        const exists = Array.from(el.options).some(o => String(o.value) === String(desired));
+        if (!exists) {
+          unavailable.push(desired);
+          el.value = '';
+        } else {
+          el.value = desired;
+        }
+      } else {
+        el.value = desired;
+      }
+
+      el.dispatchEvent(new Event(el.tagName === 'INPUT' ? 'input' : 'change', {bubbles:true}));
+    });
+
+    item.lastUsedAt = new Date().toISOString();
+    activeSavedSearchId = item.id;
+    persistSavedSearches();
+    updateActiveIndicator();
+    renderSavedSearchList();
+    closePopover();
+
+    if (unavailable.length) {
+      showSavedSearchWarning(unavailable);
+      showMessage('Saved search applied; unavailable filter values were skipped', 'info');
+    } else {
+      hideSavedSearchWarning();
+      showMessage('Saved search "' + item.name + '" applied', 'success');
+    }
+  }
+
+  function updateActiveIndicator() {
+    const bar = document.getElementById('activeSavedSearch');
+    const name = document.getElementById('activeSavedSearchName');
+    const item = savedSearches.find(x => x.id === activeSavedSearchId);
+
+    if (!bar || !name) return;
+
+    if (item) {
+      name.textContent = item.name;
+      bar.classList.add('is-visible');
+    } else {
+      bar.classList.remove('is-visible');
+      name.textContent = '';
+    }
+  }
+
+  function showSavedSearchWarning(values) {
+    const warning = document.getElementById('savedSearchWarning');
+    const text = document.getElementById('savedSearchWarningText');
+    if (!warning || !text) return;
+    text.textContent = 'Some saved criteria are no longer available (' + values.join(', ') + '). They were skipped and the remaining criteria were applied.';
+    warning.classList.add('is-visible');
+  }
+
+  function hideSavedSearchWarning() {
+    document.getElementById('savedSearchWarning')?.classList.remove('is-visible');
+  }
+
+  function clearActiveSavedSearch() {
+    activeSavedSearchId = null;
+    hideSavedSearchWarning();
+
+    const clearBtn = document.getElementById('btnClearFilters');
+    if (clearBtn) clearBtn.click();
+
+    updateActiveIndicator();
+    showMessage('Saved search cleared. Normal catalogue view restored.', 'info');
+  }
+
+  function showMessage(message, type) {
+    if (window.VP && VP.ui && typeof VP.ui.toast === 'function') {
+      VP.ui.toast(type || 'success', message, '');
+    } else if (typeof window.showToast === 'function') {
+      window.showToast(message, type || 'success');
+    }
+  }
+
+  let pendingDeleteSearchId = null;
+
+  function openDeleteSavedSearchModal(item) {
+    const modal = document.getElementById('deleteSavedSearchModal');
+    const name = document.getElementById('deleteSavedSearchName');
+    if (!modal || !name || !item) return;
+
+    // The confirmation must always sit above the saved-search UI.
+    closePopover();
+    closeModal();
+
+    pendingDeleteSearchId = item.id;
+    name.textContent = '"' + item.name + '"';
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+
+    setTimeout(() => {
+      document.getElementById('deleteSavedSearchConfirm')?.focus();
+    }, 50);
+  }
+
+  function closeDeleteSavedSearchModal() {
+    const modal = document.getElementById('deleteSavedSearchModal');
+    if (!modal) return;
+
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    pendingDeleteSearchId = null;
+  }
+
+  function deletePendingSavedSearch() {
+    if (!pendingDeleteSearchId) return;
+
+    const id = pendingDeleteSearchId;
+    const item = savedSearches.find(x => x.id === id);
+    if (!item) {
+      closeDeleteSavedSearchModal();
+      return;
+    }
+
+    savedSearches = savedSearches.filter(x => x.id !== id);
+
+    if (activeSavedSearchId === id) {
+      activeSavedSearchId = null;
+      hideSavedSearchWarning();
+    }
+
+    persistSavedSearches();
+    renderSavedSearchList();
+    updateActiveIndicator();
+    closeDeleteSavedSearchModal();
+    showMessage('Saved search deleted successfully', 'success');
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    readSavedSearches();
+    renderSavedSearchList();
+    updateSavedSearchCount();
+    updateActiveIndicator();
+
+    const savedBtn = document.getElementById('btnSavedSearches');
+    const saveBtn = document.getElementById('btnSaveSearch');
+    const closeBtn = document.getElementById('closeSavedSearches');
+    const modalClose = document.getElementById('savedSearchModalClose');
+    const cancel = document.getElementById('savedSearchCancel');
+    const confirmBtn = document.getElementById('savedSearchConfirm');
+    const clearSaved = document.getElementById('btnClearSavedSearch');
+    const pop = document.getElementById('savedSearchPopover');
+    const listSearch = document.getElementById('savedSearchListSearch');
+    const sort = document.getElementById('savedSearchSort');
+    const deleteModal = document.getElementById('deleteSavedSearchModal');
+    const deleteModalClose = document.getElementById('deleteSavedSearchModalClose');
+    const deleteModalCancel = document.getElementById('deleteSavedSearchCancel');
+    const deleteModalConfirm = document.getElementById('deleteSavedSearchConfirm');
+
+    savedBtn && savedBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = pop.classList.contains('is-open');
+      open ? closePopover() : openPopover();
+    });
+
+    saveBtn && saveBtn.addEventListener('click', () => openModal('save'));
+    closeBtn && closeBtn.addEventListener('click', closePopover);
+    modalClose && modalClose.addEventListener('click', closeModal);
+    cancel && cancel.addEventListener('click', closeModal);
+    confirmBtn && confirmBtn.addEventListener('click', saveOrRename);
+    clearSaved && clearSaved.addEventListener('click', clearActiveSavedSearch);
+    deleteModalClose && deleteModalClose.addEventListener('click', closeDeleteSavedSearchModal);
+    deleteModalCancel && deleteModalCancel.addEventListener('click', closeDeleteSavedSearchModal);
+    deleteModalConfirm && deleteModalConfirm.addEventListener('click', deletePendingSavedSearch);
+
+    listSearch && listSearch.addEventListener('input', renderSavedSearchList);
+    sort && sort.addEventListener('change', renderSavedSearchList);
+
+    document.getElementById('savedSearchName')?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') saveOrRename();
+      if (e.key === 'Escape') closeModal();
+    });
+
+    document.addEventListener('click', function (e) {
+      if (pop && pop.classList.contains('is-open') && !e.target.closest('.saved-search-anchor')) {
+        closePopover();
+      }
+
+      const itemRow = e.target.closest('.saved-search-item');
+      if (!itemRow) return;
+
+      const id = itemRow.dataset.savedSearchId;
+      const item = savedSearches.find(x => x.id === id);
+      if (!item) return;
+
+      const action = e.target.closest('[data-action]')?.dataset.action || 'apply';
+
+      if (action === 'apply') {
+        applySavedSearch(item);
+      } else if (action === 'rename') {
+        openModal('rename', item);
+      } else if (action === 'delete') {
+        openDeleteSavedSearchModal(item);
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        if (pop?.classList.contains('is-open')) closePopover();
+        if (document.getElementById('savedSearchModal')?.classList.contains('is-open')) closeModal();
+        if (deleteModal?.classList.contains('is-open')) closeDeleteSavedSearchModal();
+      }
+    });
+
+    document.getElementById('savedSearchModal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    deleteModal?.addEventListener('click', function(e) {
+      if (e.target === this) closeDeleteSavedSearchModal();
+    });
+
+    // Any manual change means the currently applied saved search is no longer exact.
+    fieldIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', function () {
+        if (!activeSavedSearchId) return;
+
+        const active = savedSearches.find(x => x.id === activeSavedSearchId);
+        if (!active) return;
+
+        const now = currentCriteria();
+        const exact = fieldIds.every(key =>
+          String(now[key] || '') === String(active.criteria[key] || '')
+        );
+
+        if (!exact) {
+          activeSavedSearchId = null;
+          updateActiveIndicator();
+        }
+      });
+    });
+  });
+})();
+</script>
+
+<script>
+(function () {
   const STORAGE_KEY = 'vpiLiteFavouriteReports';
   let favouriteIds = new Set();
   let activeCatalogueTab = 'public';
-  let observerStarted = false;
+  let syncing = false;
 
   function loadFavourites() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      favouriteIds = new Set(Array.isArray(saved) ? saved : []);
+      favouriteIds = new Set(Array.isArray(saved) ? saved.map(String) : []);
     } catch (_) {
       favouriteIds = new Set();
     }
@@ -672,184 +1681,240 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(favouriteIds)));
   }
 
-  function escapeKey(value) {
-    return String(value || '').trim().replace(/\\s+/g, ' ').toLowerCase();
+  function normalise(value) {
+    return String(value || '').trim().replace(/\s+/g, ' ').toLowerCase();
   }
 
   function getCardId(card) {
     if (!card) return '';
-    const explicit = card.dataset.reportId || card.getAttribute('data-report-id') || card.id;
-    if (explicit) return escapeKey(explicit);
 
-    const title = card.querySelector('h1,h2,h3,h4,h5,.report-card-title,.card-title,.report-name,[data-report-name]');
-    if (title && title.textContent.trim()) return escapeKey(title.textContent);
+    const explicit =
+      card.dataset.reportId ||
+      card.getAttribute('data-report-id') ||
+      card.dataset.id ||
+      card.id;
 
-    return escapeKey(card.textContent).slice(0, 180);
-  }
+    if (explicit) return normalise(explicit);
 
-  function showToast(message, type) {
-    if (window.VP && VP.ui && typeof VP.ui.toast === 'function') {
-      VP.ui.toast(type || 'success', message, '');
-      return;
+    const title = card.querySelector(
+      '.report-card-title,.card-title,.report-name,[data-report-name],h1,h2,h3,h4,h5'
+    );
+
+    if (title && title.textContent.trim()) {
+      return normalise(title.textContent);
     }
 
-    let stack = document.getElementById('toastStack');
-    if (!stack) return;
-    const toast = document.createElement('div');
-    toast.className = 'toast toast-' + (type || 'success');
-    toast.textContent = message;
-    stack.appendChild(toast);
-    setTimeout(() => toast.remove(), 2800);
+    // Stable fallback based on the card's text.
+    return normalise(card.textContent).slice(0, 200);
   }
 
-  function addFavouriteButton(card) {
-    if (!card || card.dataset.favouriteReady === 'true') return;
+  function getCards() {
+    const grid = document.getElementById('catalogueGrid');
+    if (!grid) return [];
+
+    return Array.from(grid.children).filter(
+      card => !card.classList.contains('report-grid-empty')
+    );
+  }
+
+  function updateStar(button, id) {
+    const isFavourite = favouriteIds.has(id);
+
+    button.classList.toggle('is-favourite', isFavourite);
+    button.setAttribute(
+      'aria-label',
+      isFavourite ? 'Remove from favourites' : 'Add to favourites'
+    );
+    button.setAttribute(
+      'title',
+      isFavourite ? 'Remove from favourites' : 'Add to favourites'
+    );
+
+    button.innerHTML = isFavourite
+      ? '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.63 5.33 5.88.85-4.25 4.14 1 5.85L12 16.92l-5.26 2.75 1-5.85L3.49 9.68l5.88-.85L12 3.5z"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.63 5.33 5.88.85-4.25 4.14 1 5.85L12 16.92l-5.26 2.75 1-5.85L3.49 9.68l5.88-.85L12 3.5z"/></svg>';
+  }
+
+  function ensureFavouriteButton(card) {
+    if (!card || card.classList.contains('report-grid-empty')) return;
+
     const id = getCardId(card);
     if (!id) return;
 
-    // Keep the card usable with the existing layout.
-    if (getComputedStyle(card).position === 'static') card.style.position = 'relative';
+    let button = card.querySelector('.report-favourite-btn');
 
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'report-favourite-btn';
-    button.setAttribute('aria-label', 'Add to favourites');
-    button.setAttribute('title', 'Add to favourites');
-    button.dataset.reportFavourite = id;
-    button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1l1.06-6.19L3 9.53l6.22-.9L12 3z"/></svg>';
-    card.appendChild(button);
-    card.dataset.favouriteReady = 'true';
-    updateFavouriteButton(button, id);
-  }
+    if (!button) {
+      if (getComputedStyle(card).position === 'static') {
+        card.style.position = 'relative';
+      }
 
-  function updateFavouriteButton(button, id) {
-    const isFavourite = favouriteIds.has(id);
-    button.classList.toggle('is-favourite', isFavourite);
-    button.setAttribute('aria-label', isFavourite ? 'Remove from favourites' : 'Add to favourites');
-    button.setAttribute('title', isFavourite ? 'Remove from favourites' : 'Add to favourites');
-    button.innerHTML = isFavourite
-      ? '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1l1.06-6.19L3 9.53l6.22-.9L12 3z"/></svg>'
-      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1 7.5 13.9 3 9.53l6.22-.9L12 3z"/></svg>';
-  }
+      button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'report-favourite-btn';
+      button.dataset.reportFavourite = id;
+      button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.63 5.33 5.88.85-4.25 4.14 1 5.85L12 16.92l-5.26 2.75 1-5.85L3.49 9.68l5.88-.85L12 3.5z"/></svg>';
 
-  function renderFavouriteEmptyState(grid, show) {
-    const existing = grid.querySelector('.favourite-empty-state');
-    if (!show) {
-      if (existing) existing.remove();
-      grid.classList.remove('favourites-empty');
-      return;
+      // Keep the star independent from the card click/navigation.
+      button.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleFavourite(id);
+      });
+
+      card.appendChild(button);
     }
 
-    if (existing) return;
-
-    const empty = document.createElement('div');
-    empty.className = 'favourite-empty-state';
-    empty.innerHTML = `
-      <div class="favourite-empty-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-          <path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1l1.06-6.19L3 9.53l6.22-.9L12 3z"/>
-        </svg>
-      </div>
-      <h3>No favourites yet</h3>
-      <p>You haven't added any reports to your favourites.</p>
-      <span class="empty-hint">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1l1.06-6.19L3 9.53l6.22-.9L12 3z"/>
-        </svg>
-        Click the star on a report to add it here
-      </span>`;
-    grid.appendChild(empty);
-    grid.classList.add('favourites-empty');
+    updateStar(button, id);
   }
 
-  function syncCards() {
+  function toggleFavourite(id) {
+    id = String(id);
+
+    if (favouriteIds.has(id)) {
+      favouriteIds.delete(id);
+      showFavouriteToast('Removed from favourites', 'info');
+    } else {
+      favouriteIds.add(id);
+      showFavouriteToast('Added to favourites', 'success');
+    }
+
+    saveFavourites();
+    syncCatalogue();
+  }
+
+  function showFavouriteToast(message, type) {
+    if (typeof window.showToast === 'function') {
+      window.showToast(message, type);
+    } else if (window.VP && VP.ui && typeof VP.ui.toast === 'function') {
+      VP.ui.toast(type || 'success', message, '');
+    }
+  }
+
+  function updateTabState() {
+    document.querySelectorAll('#view-catalogue .tab-btn').forEach(tab => {
+      const active = tab.dataset.tab === activeCatalogueTab;
+      tab.classList.toggle('is-active', active);
+      tab.setAttribute('aria-selected', String(active));
+    });
+  }
+
+  function updateResultCount(visibleCount) {
+    const count = document.getElementById('catalogueResultCount');
+    if (!count) return;
+    count.textContent = visibleCount + (visibleCount === 1 ? ' report' : ' reports');
+  }
+
+  function syncCatalogue() {
+    if (syncing) return;
+    syncing = true;
+
+    const cards = getCards();
+
+    cards.forEach(card => {
+      ensureFavouriteButton(card);
+
+      const id = getCardId(card);
+      const shouldShow =
+        activeCatalogueTab !== 'favourites' || favouriteIds.has(id);
+
+      card.style.display = shouldShow ? '' : 'none';
+
+      const star = card.querySelector('.report-favourite-btn');
+      if (star) updateStar(star, id);
+    });
+
+    const visibleCards = cards.filter(card => {
+      const style = window.getComputedStyle(card);
+      return style.display !== 'none' && !card.hidden;
+    });
+
+    updateResultCount(visibleCards.length);
+    updateTabState();
+    renderCatalogueEmptyState();
+
+    syncing = false;
+  }
+
+  function renderCatalogueEmptyState() {
     const grid = document.getElementById('catalogueGrid');
     if (!grid) return;
 
-    const cards = Array.from(grid.children).filter(card => !card.classList.contains('favourite-empty-state'));
-    cards.forEach(addFavouriteButton);
+    const cards = getCards();
+    const visibleCards = cards.filter(card => {
+      const style = window.getComputedStyle(card);
+      return style.display !== 'none' && !card.hidden;
+    });
 
-    if (activeCatalogueTab === 'favourites') {
-      cards.forEach(card => {
-        const id = getCardId(card);
-        card.style.display = favouriteIds.has(id) ? '' : 'none';
-      });
+    let empty = grid.querySelector('.report-grid-empty');
+
+    if (!visibleCards.length) {
+      if (!empty) {
+        grid.classList.add('is-empty');
+        grid.insertAdjacentHTML('beforeend', `
+          <div class="report-grid-empty" role="status" aria-live="polite">
+            <div class="report-grid-empty-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m20 20-4-4"></path>
+              </svg>
+            </div>
+            <strong>No reports match your filters</strong>
+            <span>Try adjusting your search or clearing one or more filters.</span>
+          </div>
+        `);
+      }
     } else {
-      cards.forEach(card => { card.style.display = ''; });
-    }
-
-    const visible = cards.filter(card => card.style.display !== 'none').length;
-    renderFavouriteEmptyState(grid, activeCatalogueTab === 'favourites' && visible === 0);
-
-    const count = document.getElementById('catalogueResultCount');
-    if (count && activeCatalogueTab === 'favourites') {
-      count.textContent = visible + (visible === 1 ? ' report' : ' reports');
+      if (empty) empty.remove();
+      grid.classList.remove('is-empty');
     }
   }
 
   function setActiveTab(tab) {
-    activeCatalogueTab = tab;
-    document.querySelectorAll('#view-catalogue .tab-btn').forEach(btn => {
-      const active = btn.dataset.tab === tab;
-      btn.classList.toggle('is-active', active);
-      btn.setAttribute('aria-selected', String(active));
-    });
-    syncCards();
-  }
-
-  function startObserver() {
-    if (observerStarted) return;
-    observerStarted = true;
-    const grid = document.getElementById('catalogueGrid');
-    if (!grid) return;
-    const observer = new MutationObserver(() => {
-      requestAnimationFrame(syncCards);
-    });
-    observer.observe(grid, { childList: true, subtree: true });
-    syncCards();
+    activeCatalogueTab = tab || 'public';
+    syncCatalogue();
   }
 
   document.addEventListener('click', function (event) {
     const tab = event.target.closest('#view-catalogue .tab-btn');
+
     if (tab) {
-      if (tab.dataset.tab === 'favourites') {
-        event.preventDefault();
-        setActiveTab('favourites');
-      } else {
-        activeCatalogueTab = tab.dataset.tab || 'public';
-        setTimeout(syncCards, 0);
-      }
+      event.preventDefault();
+      event.stopPropagation();
+      setActiveTab(tab.dataset.tab);
       return;
     }
 
-    const favouriteButton = event.target.closest('.report-favourite-btn');
-    if (favouriteButton) {
+    // Handles stars even if another script recreates the card/button.
+    const star = event.target.closest('.report-favourite-btn');
+
+    if (star) {
       event.preventDefault();
       event.stopPropagation();
-      const id = favouriteButton.dataset.reportFavourite;
-      if (!id) return;
 
-      if (favouriteIds.has(id)) {
-        favouriteIds.delete(id);
-        showToast('Removed from favourites', 'info');
-      } else {
-        favouriteIds.add(id);
-        showToast('Added to favourites', 'success');
-      }
-      saveFavourites();
-      updateFavouriteButton(favouriteButton, id);
-
-      if (activeCatalogueTab === 'favourites') {
-        syncCards();
-      }
+      const id = star.dataset.reportFavourite;
+      if (id) toggleFavourite(id);
     }
   }, true);
 
-  loadFavourites();
   document.addEventListener('DOMContentLoaded', function () {
-    startObserver();
-    setTimeout(startObserver, 300);
-    setTimeout(syncCards, 800);
+    loadFavourites();
+
+    const grid = document.getElementById('catalogueGrid');
+    if (!grid) return;
+
+    const observer = new MutationObserver(function () {
+      requestAnimationFrame(syncCatalogue);
+    });
+
+    observer.observe(grid, {
+      childList: true,
+      subtree: true
+    });
+
+    syncCatalogue();
+
+    setTimeout(syncCatalogue, 300);
+    setTimeout(syncCatalogue, 800);
   });
 })();
 </script>\n
